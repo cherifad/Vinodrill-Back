@@ -64,3 +64,4 @@ Route::apiResource('partenaire', PartenaireController::class);
 Route::apiResource('cave', CaveController::class);
 Route::apiResource('visite', VisiteController::class);
 Route::apiResource('typevisite', TypevisiteController::class);
+
