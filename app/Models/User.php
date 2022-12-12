@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use app\Models\Provider;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -42,4 +43,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function providers()
+    {
+        return $this->hasMany(Provider::class,'user_id','id');
+    }
 }
