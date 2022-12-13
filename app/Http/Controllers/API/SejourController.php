@@ -26,7 +26,7 @@ class SejourController extends Controller
         $etape = request('etape');
         $participe = request('participe');
         $exceptId = request('except'); //except idsejour, used for related
-        $idsej = request('idsejour');
+        $idsej = request('idsejour'); //
 
         // limit number of sejours
         $limit = request('limit');

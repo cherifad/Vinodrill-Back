@@ -54,8 +54,6 @@ class ClientController extends Controller
             $commande->reservations;
         });
 
-
-
         $client->paiements->each(function($paiement) {
             $paiement->paiements;
         });
@@ -63,8 +61,17 @@ class ClientController extends Controller
         return $client;
     }
 
-    public static function updateWithId(int $id, Request $request)
+    public function updateWithId(int $id, Request $request)
     {
+        // validate the request
+        $this->validate($request, [
+            'nomclient' => ['required', 'string', 'max:255'], 
+            'prenomclient' => ['required', 'string', 'max:255'],
+            'datenaissance' => ['required', 'date', "before:" . date('d-m-Y', strtotime('18 years ago')) . ""],
+            'sexe' => ['required', 'string', 'max:1'],
+            'emailclient' => ['required', 'string', 'email', 'max:255'],
+        ]);
+
         $client = Client::where('idclient', $id)->first();
 
         $client->update($request->all());
@@ -83,6 +90,7 @@ class ClientController extends Controller
     {
         // validate the request
         $this->validate($request, [
+            'idclient' => 'required',
             'nomclient' => ['required', 'string', 'max:255'], 
             'prenomclient' => ['required', 'string', 'max:255'],
             'datenaissance' => ['required', 'date', "before:" . date('d-m-Y', strtotime('18 years ago')) . ""],
@@ -91,11 +99,11 @@ class ClientController extends Controller
         ]);
 
         // update the existing client
+        $client = Client::where('idclient', $request->idclient)->first();
         $client->update($request->all());
 
         return response()->json([
-            'success' => true,
-            'data' => $request->all()
+            'success' => true
         ]);
     }
 
