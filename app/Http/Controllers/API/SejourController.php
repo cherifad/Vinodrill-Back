@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Participe;
+use App\Models\FaitPartiDe;
 use App\Models\Sejour;
 use Illuminate\Http\Request;
 
@@ -133,6 +134,7 @@ class SejourController extends Controller
         $etape = request('etape');
         $catparticipant = request('catparticipant');
         $hebergement = request('hebergement');
+        $visite = request('visite');
 
         if ($avis) {
             $sejour->avis;
@@ -160,6 +162,17 @@ class SejourController extends Controller
 
             foreach ($etapes as $etape) {
                 $hebergements[] = $etape->hebergement->hotel;
+            }
+        }
+
+        if ($visite) {
+            $etapes = $sejour->etapes;
+            $visites = [];
+
+
+            foreach ($etapes as $etape) {
+                dump($etape->fait_parti_des);
+                $etape->fait_parti_des;
             }
         }
 
