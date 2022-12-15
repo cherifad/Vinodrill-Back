@@ -31,16 +31,12 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return ClientController::findById($request->user()->id);
 });
 
-// Route::middleware(['auth:sanctum'])->put('/user', function (Request $request) {
-//     return ClientController::updateWithId($request->user()->id, $request);
-// });
-
 Route::apiResource('user', ClientController::class)
     ->only(['update'])
     ->middleware('auth:sanctum');
 
-Route::get('/login/{provider}', [AuthController::class,'redirectToProvider']);
-Route::get('/login/{provider}/callback', [AuthController::class,'handleProviderCallback']);
+// Route::get('/login/{provider}', [AuthController::class,'redirectToProvider']);
+// Route::get('/login/{provider}/callback', [AuthController::class,'handleProviderCallback']);
 
 Route::apiResource('adresse', AdresseController::class)
     ->only(['store', 'update', 'destroy', 'show'])

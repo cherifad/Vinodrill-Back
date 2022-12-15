@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OAuthProviderController;
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
                 ->middleware('guest')
@@ -35,3 +36,12 @@ Route::post('/email/verification-notification', [EmailVerificationNotificationCo
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->middleware('auth')
                 ->name('logout');
+
+Route::middleware(['guest'])
+                ->prefix('login')
+                ->name('login')
+                ->group(function () {
+                    Route::get('{provider}', [OAuthProviderController::class, 'index'])->name('provider');
+                    Route::get('{provider}/callback', [OAuthProviderController::class, 'store'])->name('provider.callback');
+                });
+            

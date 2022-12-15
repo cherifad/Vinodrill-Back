@@ -13,24 +13,26 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('providers', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('o_auth_providers', function (Blueprint $table) {
+            $table->id();
             $table->string('provider');
             $table->string('provider_id');
-            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('providers');
+        Schema::table('o_auth_providers', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+
+        Schema::dropIfExists('o_auth_providers');
     }
+
 };
