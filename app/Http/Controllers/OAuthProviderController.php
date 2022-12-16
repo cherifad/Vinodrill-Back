@@ -48,7 +48,7 @@ class OAuthProviderController extends Controller
 
             return redirect(env('REDIRECT_AFTER_LOGIN'));
         } catch (\Exception $e) {
-            return redirect(env('REDIRECT_AFTER_LOGIN_FAILURE'));
+            return redirect(env('REDIRECT_AFTER_LOGIN_FAILURE') . '?error=true&provider=' . $provider->value);
         }
     }
 

@@ -18,10 +18,18 @@ class AviController extends Controller
         // get all avis
         $avis = Avi::all();
 
+        $titresejour = request("titresejour");
         $client = request("client");
 
         if($client){
             $avis = Avi::where('idclient', $client)->get();
+        }
+
+        if($titresejour){
+            foreach($avis as $avi){
+                // get only titre sejour for the sejour attached to the avis
+                $avi->titresejour = $avi->sejour->titresejour;
+            }
         }
         
         // return avis as a resource with success message

@@ -15,6 +15,7 @@ use App\Http\Controllers\API\VisiteController;
 use App\Http\Controllers\API\TypevisiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StripeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// User
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return ClientController::findById($request->user()->id);
 });
@@ -35,14 +37,16 @@ Route::apiResource('user', ClientController::class)
     ->only(['update'])
     ->middleware('auth:sanctum');
 
-// Route::get('/login/{provider}', [AuthController::class,'redirectToProvider']);
-// Route::get('/login/{provider}/callback', [AuthController::class,'handleProviderCallback']);
-
 Route::apiResource('adresse', AdresseController::class)
     ->only(['store', 'update', 'destroy', 'show'])
     ->middleware('auth:sanctum');
 
+// Payment
+Route::get('/stripe-payment', [StripeController::class, 'handleGet']);
+Route::post('/stripe-payment', [StripeController::class, 'handlePost'])->name('stripe.payment');
 
+
+// Public
 Route::apiResource('sejour', SejourController::class);
 Route::apiResource('avis', AviController::class);
 Route::apiResource('destination', DestinationController::class);

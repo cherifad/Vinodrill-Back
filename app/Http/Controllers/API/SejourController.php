@@ -171,7 +171,6 @@ class SejourController extends Controller
 
 
             foreach ($etapes as $etape) {
-                dump($etape->fait_parti_des);
                 $etape->fait_parti_des;
             }
         }
