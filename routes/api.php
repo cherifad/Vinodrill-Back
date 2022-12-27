@@ -13,9 +13,12 @@ use App\Http\Controllers\API\AdresseController;
 use App\Http\Controllers\API\CaveController;
 use App\Http\Controllers\API\VisiteController;
 use App\Http\Controllers\API\TypevisiteController;
+use App\Http\Controllers\API\ActiviteController;
+use App\Http\Controllers\API\SocieteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StripeController;
+use App\Http\Controllers\StripePaymentController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,10 +44,6 @@ Route::apiResource('adresse', AdresseController::class)
     ->only(['store', 'update', 'destroy', 'show'])
     ->middleware('auth:sanctum');
 
-// Payment
-Route::get('/stripe-payment', [StripeController::class, 'handleGet']);
-Route::post('/stripe-payment', [StripeController::class, 'handlePost'])->name('stripe.payment');
-
 
 // Public
 Route::apiResource('sejour', SejourController::class);
@@ -58,4 +57,8 @@ Route::apiResource('partenaire', PartenaireController::class);
 Route::apiResource('cave', CaveController::class);
 Route::apiResource('visite', VisiteController::class);
 Route::apiResource('typevisite', TypevisiteController::class);
+Route::apiResource('activite', ActiviteController::class);
+Route::apiResource('societe', SocieteController::class);
+
+Route::post('/add-money-stripe',[StripePaymentController::class,'postPaymentStripe'])->name('addmoney.stripe');
 
