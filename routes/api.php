@@ -18,6 +18,7 @@ use App\Http\Controllers\API\SocieteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StripePaymentController;
+use Symfony\Component\Filesystem\Filesystem;
 
 
 /*
@@ -62,3 +63,24 @@ Route::apiResource('societe', SocieteController::class);
 
 Route::post('/add-money-stripe',[StripePaymentController::class,'postPaymentStripe'])->name('addmoney.stripe');
 
+Route::post('/upload', function (Request $request) {    
+
+    $validatedData = $request->validate([
+        'file' => 'required|file|mimes:jpg,jpeg,png,svg|max:2048',
+    ]);
+
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+        $path = $file->store('uploads', 'public');
+        $url = Storage::disk('public')->url($path);
+        return response()->json(['success' => true, 'url' => $url]);
+    } else {
+        return response()->json(['error' => 'No file was uploaded']);
+    }
+
+    // $file = $request->fichier;
+    // $path = $file->store('uploads', 'public');
+    // $path = $file->storeAs('uploads', 'custom_filename.jpg', 'public');
+
+    // return response()->json(['success' => true, 'path' => $path]);
+});

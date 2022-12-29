@@ -30,6 +30,8 @@ class Hebergement extends Model
      */
     protected $primaryKey = 'idhebergement';
 
+    public $timestamps = false;
+
     /**
      * Indicates if the IDs are auto-incrementing.
      * 
