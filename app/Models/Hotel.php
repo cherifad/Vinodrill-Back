@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $emailpartenaire
  * @property string $contact
  * @property string $detailpartenaire
+ * @property Hebergement[] $hebergements
  * @property Etoilehotel $etoilehotel
  * @property Partenaire $partenaire
- * @property Hebergement[] $hebergements
  */
 class Hotel extends Model
 {
@@ -42,12 +42,18 @@ class Hotel extends Model
      */
     public $incrementing = false;
 
-    public $timestamps = false;
-
     /**
      * @var array
      */
     protected $fillable = ['nbetoilehotel', 'nompartenaire', 'ruepartenaire', 'cppartenaire', 'villepartenaire', 'photopartenaire', 'emailpartenaire', 'contact', 'detailpartenaire'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function hebergements()
+    {
+        return $this->hasMany('App\Models\Hebergement', 'idpartenaire', 'idpartenaire');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -63,13 +69,5 @@ class Hotel extends Model
     public function partenaire()
     {
         return $this->belongsTo('App\Models\Partenaire', 'idpartenaire', 'idpartenaire');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function hebergements()
-    {
-        return $this->hasMany('App\Models\Hebergement', 'idpartenaire', 'idpartenaire');
     }
 }

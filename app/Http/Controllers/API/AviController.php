@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Avi;
+use App\Models\ImageAvis;
 use Illuminate\Http\Request;
 
 class AviController extends Controller
@@ -43,7 +44,41 @@ class AviController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate data
+        $this->validate($request, [
+            'note' => 'required',
+            'commentaire' => 'required',
+            'titreavis' => 'required',
+            'dateavis' => 'required',
+            'avisignale' => 'required',
+            'typesignalement' => 'required',
+            'idsejour' => 'required',
+            'idclient' => 'required',
+            'img_ids' => 'required'            
+        ]);
+
+        foreach($request->img_ids as $img_id){
+            $image_avis = ImageAvis::create([
+                'idavis' => $request->idavis,
+                'idimage' => $img_id
+            ]);
+        }
+        
+        // create avis
+        $avi = Avi::create([
+            'note' => $request->note,
+            'commentaire' => $request->commentaire,
+            'titreavis' => $request->titreavis,
+            'dateavis' => $request->dateavis,
+            'avisignale' => $request->avisignale,
+            'typesignalement' => $request->typesignalement
+        ]);
+
+        // return avis as a resource with success message
+        return response()->json([
+            'success' => true,
+            'data' => $avi
+        ]);
     }
 
     /**

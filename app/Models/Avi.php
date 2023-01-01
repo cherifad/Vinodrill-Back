@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean $avisignale
  * @property string $typesignalement
  * @property Client[] $clients
+ * @property Image[] $images
  * @property Sejour $sejour
  * @property Client $client
  */
@@ -26,9 +27,6 @@ class Avi extends Model
      * @var string
      */
     protected $primaryKey = 'idavis';
-    
-    // set updated_at and created_at to false
-    public $timestamps = false;
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -48,6 +46,14 @@ class Avi extends Model
     public function clients()
     {
         return $this->hasMany('App\Models\Client', 'idavis', 'idavis');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany('App\Models\Image', 'image_avi', 'idavis', 'idimage');
     }
 
     /**

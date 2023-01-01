@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +30,7 @@ Route::get('/clear', function() {
     return "Cleared!";
  
  });
+
+Route::post('/payment/checkout', [PaymentController::class, 'checkout']);
+Route::get('/payment/success', [PaymentController::class, 'success']);
+Route::post('/webhook', [PaymentController::class, 'sucess_v2']);

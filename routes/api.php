@@ -17,8 +17,11 @@ use App\Http\Controllers\API\ActiviteController;
 use App\Http\Controllers\API\SocieteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\PaymentController;
 use Symfony\Component\Filesystem\Filesystem;
+use App\Http\Controllers\API\CommandeController;
+use App\Http\Controllers\API\HotelController;
+use App\Http\Controllers\API\MultipleUploadController;
 
 
 /*
@@ -60,8 +63,8 @@ Route::apiResource('visite', VisiteController::class);
 Route::apiResource('typevisite', TypevisiteController::class);
 Route::apiResource('activite', ActiviteController::class);
 Route::apiResource('societe', SocieteController::class);
-
-Route::post('/add-money-stripe',[StripePaymentController::class,'postPaymentStripe'])->name('addmoney.stripe');
+Route::apiResource('commande', CommandeController::class);
+Route::apiResource('hotel', HotelController::class);
 
 Route::post('/upload', function (Request $request) {    
 
@@ -84,3 +87,5 @@ Route::post('/upload', function (Request $request) {
 
     // return response()->json(['success' => true, 'path' => $path]);
 });
+
+Route::post('/multiple-upload', [MultipleUploadController::class, 'upload']);
