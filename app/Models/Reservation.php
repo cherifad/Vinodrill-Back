@@ -24,6 +24,15 @@ class Reservation extends Model
      */
     protected $table = 'reservation';
 
+    public $timestamps = false;
+
+    /**
+     * The primary key for the model.
+     * 
+     * @var string
+     */
+    protected $primaryKey = 'refcommande';
+
     /**
      * @var array
      */

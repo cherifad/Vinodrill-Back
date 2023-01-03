@@ -22,7 +22,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use App\Http\Controllers\API\CommandeController;
 use App\Http\Controllers\API\HotelController;
 use App\Http\Controllers\API\MultipleUploadController;
-
+use App\Http\Controllers\API\CouponController;
+use Twilio\Rest\Client;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,3 +90,28 @@ Route::post('/upload', function (Request $request) {
 });
 
 Route::post('/multiple-upload', [MultipleUploadController::class, 'upload']);
+Route::post('/coupon/check', [CouponController::class, 'check']);
+
+Route::get('/login', function () {
+    // Generate a random login code
+    $loginCode = rand(10000, 99999);
+
+    // Save the login code to the session
+    session(['login_code' => $loginCode]);
+
+    // Send the login code to the user via SMS
+    $sid = env('TWILIO_ACCOUNT_SID');
+    $token = env('TWILIO_SECRET');
+    $from = "your_twilio_phone_number";
+    $to = "the_user's_phone_number";
+
+    $twilio = new Client($sid, $token);
+
+    $message = $twilio->messages
+                      ->create($to, // to
+                               ['from' => $from, 'body' => $loginCode]
+                      );
+
+    // Redirect the user to the login code verification form
+    return redirect('/verify-login-code');
+});

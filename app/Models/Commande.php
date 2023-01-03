@@ -41,10 +41,12 @@ class Commande extends Model
      */
     public $incrementing = false;
 
+    public $timestamps = false;
+
     /**
      * @var array
      */
-    protected $fillable = ['idclient', 'idpaiement', 'datecommande', 'prixcommande', 'quantite', 'message', 'cheminfacture'];
+    protected $fillable = ['idclient', 'idpaiement', 'datecommande', 'prixcommande', 'quantite', 'message', 'cheminfacture', 'estcheque'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
