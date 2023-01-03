@@ -5,8 +5,10 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Models\Image;
+use App\Http\Models\ImageAvis;
+use App\Http\Controllers\Controller;
 
-class UploadController extends Controller
+class MultipleUploadController extends Controller
 {
     public function upload(Request $request)
     {
@@ -29,7 +31,7 @@ class UploadController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $urls
+            'data' => $ids
         ]);
     }
 }

@@ -16,10 +16,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $typesignalement
  * @property Client[] $clients
  * @property Image[] $images
+ * @property Avi[] $avis
  * @property Sejour $sejour
  * @property Client $client
  */
-class Avi extends Model
+class Avis extends Model
 {
     /**
      * The primary key for the model.
@@ -29,18 +30,9 @@ class Avi extends Model
     protected $primaryKey = 'idavis';
 
     /**
-     * Indicates if the IDs are auto-incrementing.
-     * 
-     * @var bool
-     */
-    public $incrementing = false;
-
-    public $timestamps = false;
-
-    /**
      * @var array
      */
-    protected $fillable = ['idclient', 'idsejour', 'note', 'commentaire', 'titreavis', 'dateavis', 'avisignale', 'typesignalement', 'estreponse'];
+    protected $fillable = ['idclient', 'idsejour', 'note', 'commentaire', 'titreavis', 'dateavis', 'avisignale', 'typesignalement'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -56,6 +48,14 @@ class Avi extends Model
     public function images()
     {
         return $this->belongsToMany('App\Models\Image', 'image_avi', 'idavis', 'idimage');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function avis()
+    {
+        return $this->belongsToMany('App\Models\Avi', 'a_repondu', 'idavis', 'rep_idavis');
     }
 
     /**

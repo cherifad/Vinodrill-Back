@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Avi;
+use App\Models\ReponseAvi;
 use App\Models\ImageAvis;
 use Illuminate\Http\Request;
 
@@ -29,6 +30,12 @@ class AviController extends Controller
         if($idsejour){
             $avis = Avi::where('idsejour', $idsejour)->get();
         }
+
+        // do not return avis with estreponse is true
+        $avis = $avis->filter(function ($value, $key) {
+            return $value->estreponse == false;
+        });
+
         // return avis as a resource with success message
         return response()->json([
             'success' => true,
@@ -49,31 +56,27 @@ class AviController extends Controller
             'note' => 'required',
             'commentaire' => 'required',
             'titreavis' => 'required',
-            'dateavis' => 'required',
-            'avisignale' => 'required',
-            'typesignalement' => 'required',
             'idsejour' => 'required',
             'idclient' => 'required',
-            'img_ids' => 'required'            
+            'img_ids' => 'required',
         ]);
 
-        foreach($request->img_ids as $img_id){
-            $image_avis = ImageAvis::create([
-                'idavis' => $request->idavis,
-                'idimage' => $img_id
-            ]);
-        }
+        $date = date('d-m-Y');
         
         // create avis
         $avi = Avi::create([
             'note' => $request->note,
             'commentaire' => $request->commentaire,
             'titreavis' => $request->titreavis,
-            'dateavis' => $request->dateavis,
-            'avisignale' => $request->avisignale,
-            'typesignalement' => $request->typesignalement
+            'dateavis' => $date,
         ]);
-
+        
+        foreach($request->img_ids as $img_id){
+            $image_avis = ImageAvis::create([
+                'idavis' => $avi->idavis,
+                'idimage' => $img_id
+            ]);
+        }
         // return avis as a resource with success message
         return response()->json([
             'success' => true,
@@ -129,5 +132,50 @@ class AviController extends Controller
     public function destroy(Avi $avi)
     {
         //
+    }
+
+    public function storeReponse(Request $request)
+    {
+        // validate data
+        $this->validate($request, [
+            'idavis' => 'required',
+            'commentaire' => 'required',
+            'idclient' => 'required',
+            'idsejour' => 'required',
+        ]);
+
+        
+        try {
+            $reponse = Avi::Create([
+                'titreavis' => 'Reponse',
+                'idsejour' => $request->idsejour,
+                'idclient' => $request->idclient,
+                'commentaire' => $request->commentaire,
+                'note' => 0,
+                'dateavis' => date('d-m-Y'),
+                'estreponse' => true,
+            ]);
+    
+            // get the highest id of avis table 
+            $rep_id = Avi::max('idavis');
+    
+            // create avis
+            $reponse = ReponseAvi::create([
+                'rep_idavis' => $rep_id,
+                'idavis' => $request->idavis,
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
+
+
+
+
+        // return avis as a resource with success message
+        return response()->json([
+            'success' => true,
+            'data' => $reponse
+        ]);
     }
 }

@@ -53,6 +53,7 @@ Route::apiResource('adresse', AdresseController::class)
 // Public
 Route::apiResource('sejour', SejourController::class);
 Route::apiResource('avis', AviController::class);
+Route::post('/avis/reponse', [AviController::class, 'storeReponse']);
 Route::apiResource('destination', DestinationController::class);
 Route::apiResource('theme', ThemeController::class);
 Route::apiResource('catparticipant', CatparticipantController::class);
@@ -91,6 +92,7 @@ Route::post('/upload', function (Request $request) {
 
 Route::post('/multiple-upload', [MultipleUploadController::class, 'upload']);
 Route::post('/coupon/check', [CouponController::class, 'check']);
+Route::post('/coupon/get', [CouponController::class, 'get']);
 
 Route::get('/login', function () {
     // Generate a random login code

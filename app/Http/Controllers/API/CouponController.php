@@ -26,5 +26,25 @@ class CouponController extends Controller
         } else {
             return response()->json(['amount' => null, 'request' => $request->coupon]);
         }
-    }    
+    }  
+    
+    public function checkReservation(Request $request)
+    {
+        $reservation = Reservation::find($request->reservation);
+        if ($reservation) {
+            return response()->json(['reservation' => $reservation]);
+        } else {
+            return response()->json(['reservation' => null]);
+        }
+    }
+
+    public function get(Request $request) {
+        $coupon = Coupon::where('refcommande', $request->refcommande)->first();
+
+        if ($coupon) {
+            return response()->json(['coupon' => $coupon]);
+        } else {
+            return response()->json(['coupon' => null]);
+        }
+    }
 }
