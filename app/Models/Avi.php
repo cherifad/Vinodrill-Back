@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ReponseAvi;
 
 /**
  * @property integer $idavis
@@ -72,5 +73,10 @@ class Avi extends Model
     public function client()
     {
         return $this->belongsTo('App\Models\Client', 'idclient', 'idclient');
+    }
+
+    public function reponse()
+    {
+        return $this->hasOne('App\Models\ReponseAvi', 'idavis', 'idavis');
     }
 }

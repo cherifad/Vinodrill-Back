@@ -163,6 +163,15 @@ class PaymentController extends Controller
         // get data from stripe checkout session
         $session = Session::retrieve($sessionId);
 
+        // another way to get the payment method
+        $payment_intent = \Stripe\PaymentIntent::retrieve($session->payment_intent);
+
+        // get data from the payment method
+        $payment_method = \Stripe\PaymentMethod::retrieve($payment_intent->payment_method);
+
+        // get data from the card
+        $card = $payment_method->card;
+
         // get data from local session
         $additional_data = session('additional_data');
 
@@ -179,20 +188,9 @@ class PaymentController extends Controller
         // Retrieve the customer using their ID
         $customer = \Stripe\Customer::retrieve($session->customer);
 
-        // Get the first payment source for the customer
-        $firstPaymentSource = $customer->sources;
-
-        if($firstPaymentSource != null) {
-            $firstPaymentSource = $firstPaymentSource->all(['object' => 'card'])->first();
-        } 
-
         $paiement = new Paiement();
         $paiement->idclient = $additional_data->idclient;
-        if($firstPaymentSource != null) {
-            $paiement->libellepaiement = $firstPaymentSource->brand;
-        } else {
-            $paiement->libellepaiement = "cb";
-        }
+        $paiement->libellepaiement = $card->brand;
         $paiement->preference = $additional_data->save_credentials;
 
         $paiement->save();
@@ -202,39 +200,31 @@ class PaymentController extends Controller
         $commande->idpaiement = $idpaiement;
         $commande->save();
 
-        // Check if the payment method is a card
-        if ($firstPaymentSource != null) {
-            $cardBrand = $firstPaymentSource->card->brand;
-            $cardLastFour = $firstPaymentSource->card->last4;
-            $cardExpiryMonth = $firstPaymentSource->card->exp_month;
-            $cardExpiryYear = $firstPaymentSource->card->exp_year;
-        } else {
-            $cardBrand = "cb";
-            $cardLastFour = null;
-            $cardExpiryMonth = null;
-            $cardExpiryYear = null;
-        }
-
         if($additional_data->save_credentials) {
             // check if client has not already a card saved
-            $client = Client::find($additional_data->idclient);         
-
+            $client = Client::find($additional_data->idclient);  
+            
             // save the card in the client and check if the client has not already a card saved
             if($client->idcb == null) {
                 $cb = new CB();
                 $cb->cvc = Hash::make(rand(100, 999)); 
-                $cb->codecb = Hash::make($cardLastFour);              
-                $cb->anneeexp = Hash::make($cardExpiryYear);
-                $cb->moisexp = Hash::make($cardExpiryMonth);
+                $cb->codecb = Hash::make($card->last4);              
+                $cb->anneeexp = $card->exp_year;
+                $cb->moisexp = $card->exp_month;
             } else {
                 $cb = CB::find($client->idcb);
                 $cb->cvc = Hash::make(rand(100, 999)); 
-                $cb->codecb = Hash::make($cardLastFour);              
-                $cb->anneeexp = Hash::make($cardExpiryYear);
-                $cb->moisexp = Hash::make($cardExpiryMonth);
+                $cb->codecb = Hash::make($card->last4);              
+                $cb->anneeexp = $card->exp_year;
+                $cb->moisexp = $card->exp_month;
             }
 
             $cb->save();
+
+            // get the highest id in the cb table and save it in the client
+            $idcb = CB::all()->last()->idcb;
+            $client->idcb = $idcb;
+            $client->save();
         }
 
         $refcommande = Commande::orderBy('refcommande', 'desc')->first()->refcommande;
@@ -246,7 +236,7 @@ class PaymentController extends Controller
             $res->idsejour = $reservation["idsejour"];
             $res->datedebutreservation = $reservation["datedebutreservation"];
             // $res->estcadeau = $reservation["estcadeau"];
-            $res->estcadeau = false;
+            $res->estcadeau = $reservation["estcadeau"];
             $res->nbenfant = $reservation["nbEnfants"];
             $res->nbadulte = $reservation["nbAdultes"];
             $res->nbchambre = $reservation["nbChambres"];

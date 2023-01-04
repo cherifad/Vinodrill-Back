@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Boncommande;
 
 /**
  * @property integer $refcommande
@@ -52,5 +53,12 @@ class Reservation extends Model
     public function sejour()
     {
         return $this->belongsTo('App\Models\Sejour', 'idsejour', 'idsejour');
+    }
+
+    public function cadeau()
+    {
+        if ($this->estcadeau) {
+            return $this->hasOne('App\Models\Boncommande', 'refcommande', 'refcommande');
+        }
     }
 }

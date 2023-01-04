@@ -23,11 +23,15 @@ class AviController extends Controller
         $idsejour = request("sejour");
         $client = request("client");
 
-        if($client){
+        if($client && $idsejour){
+            $avis = Avi::where('idclient', $client)->where('idsejour', $idsejour)->get();
+        }
+
+        if($client && !$idsejour){
             $avis = Avi::where('idclient', $client)->get();
         }
         
-        if($idsejour){
+        if($idsejour && !$client){
             $avis = Avi::where('idsejour', $idsejour)->get();
         }
 
@@ -35,6 +39,23 @@ class AviController extends Controller
         $avis = $avis->filter(function ($value, $key) {
             return $value->estreponse == false;
         });
+
+        // get all responses of each avis
+        foreach($avis as $avi){
+            // get responses of avis
+            $idrep = $avi->reponse;
+
+            if($idrep == null)
+                continue;
+
+            // get avis with idavis = idrep
+            $reponse = Avi::where('idavis', $idrep->rep_idavis)->first();
+
+            $avi->reponse_admin = $reponse;
+        }
+
+        // sort avis by idavis
+        $avis = $avis->sortByDesc('idavis');
 
         // return avis as a resource with success message
         return response()->json([
@@ -58,25 +79,27 @@ class AviController extends Controller
             'titreavis' => 'required',
             'idsejour' => 'required',
             'idclient' => 'required',
-            'img_ids' => 'required',
         ]);
 
-        $date = date('d-m-Y');
+        // get current date
+        $date = date('Y-m-d');
         
         // create avis
         $avi = Avi::create([
+            'idsejour' => $request->idsejour,
+            'idclient' => $request->idclient,
             'note' => $request->note,
             'commentaire' => $request->commentaire,
             'titreavis' => $request->titreavis,
             'dateavis' => $date,
         ]);
         
-        foreach($request->img_ids as $img_id){
-            $image_avis = ImageAvis::create([
-                'idavis' => $avi->idavis,
-                'idimage' => $img_id
-            ]);
-        }
+        // foreach($request->img_ids as $img_id){
+        //     $image_avis = ImageAvis::create([
+        //         'idavis' => $avi->idavis,
+        //         'idimage' => $img_id
+        //     ]);
+        // }
         // return avis as a resource with success message
         return response()->json([
             'success' => true,
@@ -92,7 +115,19 @@ class AviController extends Controller
      */
     public function show(Avi $avi)
     {
-        //
+        // get responses of avis
+        $idrep = $avi->reponse->rep_idavis;
+
+        // get avis with idavis = idrep
+        $reponse = Avi::where('idavis', $idrep)->first();
+
+        $avi->reponse_admin = $reponse; 
+
+        // return avis as a resource with success message
+        return response()->json([
+            'success' => true,
+            'data' => $avi
+        ]);
     }
 
     /**

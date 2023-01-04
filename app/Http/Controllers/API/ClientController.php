@@ -51,7 +51,11 @@ class ClientController extends Controller
 
         $client->commandes->each(function($commande) {
             $commande->paiement;
-            $commande->reservations;
+            foreach($commande->reservations as $reservation) {
+                if($reservation->estcadeau) {
+                    $reservation->cadeau;
+                }
+            }
         });
 
         $client->paiements->each(function($paiement) {
@@ -105,6 +109,18 @@ class ClientController extends Controller
         return response()->json([
             'success' => true
         ]);
+    }
+
+    public function getCb (Request $request) {
+        $client = Client::where('idclient', $request->idclient)->first();
+
+        $client->cb;
+
+        // unhash the cb
+        $client->cb->numerocb = decrypt($client->cb->numerocb);
+        $client->cb->cryptogramme = decrypt($client->cb->cryptogramme);
+        $client->cb->dateexpiration = decrypt($client->cb->dateexpiration);
+        
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Models\Participe;
 use App\Models\FaitPartiDe;
 use App\Models\Sejour;
 use Illuminate\Http\Request;
+use App\Models\Avi;
 
 class SejourController extends Controller
 {
@@ -51,7 +52,7 @@ class SejourController extends Controller
         }
 
         if ($etape) {
-            $sejours = $sejours->where('etape', $etape);
+            $etapes = $sejours->where('etape', $etape);
         }
 
         if ($participe && $participe != 'null') {
@@ -137,7 +138,23 @@ class SejourController extends Controller
         $visite = request('visite');
 
         if ($avis) {
-            $sejour->avis;
+
+             // get all responses of each avis
+            foreach($sejour->avis as $avi){
+                // get responses of avis
+                $idrep = $avi->reponse;
+
+                if($idrep == null)
+                    continue;
+
+                // get avis with idavis = idrep
+                $reponse = Avi::where('idavis', $idrep->rep_idavis)->first();
+
+                $avi->reponse_admin = $reponse;
+            }
+
+            // exclude avis with estreponse = true
+            $sejour->avis = $sejour->avis->where('estreponse', false);
         }
 
         if ($destination) {
@@ -150,6 +167,14 @@ class SejourController extends Controller
 
         if ($etape) {
             $sejour->etapes;
+
+            // foreach ($sejour->etapes as $etape) {
+            //     dd($etape);
+            //     $etape->fait_parti_des;
+            //     foreach ($etape->fait_parti_des as $fait_parti_de) {
+            //         $sejour->visite = $fait_parti_de->visite;
+            //     }
+            // }
         }
 
         if ($catparticipant) {
@@ -206,8 +231,6 @@ class SejourController extends Controller
             'photosejour' => 'required',
             'prixsejour' => 'required',
             'descriptionsejour' => 'required',
-            'nbjour' => 'required',
-            'nbnuit' => 'required'
         ]);
 
         // update sejour
@@ -219,7 +242,8 @@ class SejourController extends Controller
             'prixsejour' => $request->prixsejour,
             'descriptionsejour' => $request->descriptionsejour,
             'nbjour' => $request->nbjour,
-            'nbnuit' => $request->nbnuit
+            'nbnuit' => $request->nbnuit,
+            'libelletemps' => $request->libelletemps,
         ]);
 
         // return sejour as a resource with success message
