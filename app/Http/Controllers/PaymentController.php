@@ -177,7 +177,7 @@ class PaymentController extends Controller
 
         $commande = new Commande();
         $commande->idclient = $additional_data->idclient;
-        $commande->datecommande = Carbon::createFromTimestamp($session->created)->format('d-m-Y');
+        $commande->datecommande = Carbon::createFromTimestamp($session->created)->format('Y-m-d H:i:s');
         $commande->message = $additional_data->notecommande;
         $commande->prixcommande = $session->amount_total / 100;
         $commande->quantite = 1;

@@ -117,3 +117,14 @@ Route::get('/login', function () {
     // Redirect the user to the login code verification form
     return redirect('/verify-login-code');
 });
+
+
+Route::post('/delete_client_cascade', function (Request $request) {
+    $parameter = $request->input('parameter');
+    DB::statement("CALL delete_client_cascade(?)", [$parameter]);
+});
+
+Route::post('/anonymise_client', function (Request $request) {
+    $parameter = $request->input('parameter');
+    DB::statement("CALL anonymise_client(?)", [$parameter]);
+});
